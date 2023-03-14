@@ -2,8 +2,16 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import * as Sentry from "@sentry/nextjs";
+
 
 const Home: NextPage = () => {
+  const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
+  const sentry = () => {
+    console.log("Invoking sentry from button click", SENTRY_DSN);
+    Sentry.captureMessage("Error from button click");
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -20,6 +28,12 @@ const Home: NextPage = () => {
         <p className={styles.description}>
           Get started by editing{' '}
           <code className={styles.code}>pages/index.tsx</code>
+        </p>
+
+        <p className={styles.description}>
+          Trigger some errors
+          <button onClick={() => { throw new Error('Error from button') }}>Throw error</button>
+          <button onClick={sentry}>Explicit sentry call</button>
         </p>
 
         <div className={styles.grid}>
